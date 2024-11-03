@@ -1,5 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
+import * as decamelize from 'decamelize';
 import * as cxapi from '@aws-cdk/cx-api';
 import * as fs from 'fs-extra';
 import { availableInitTemplates, cliInit } from '../lib/init';
@@ -164,6 +165,27 @@ describe('constructs version', () => {
       const version = m && m[1];
       expect(version).toMatch(/>=10\.\d+\.\d,<11\.0\.0/);
     });
+  });
+
+  cliTest('--name should set template name', async (workDir) => {
+    const name = 'customName';
+    await cliInit({
+      language: 'typescript',
+      workDir,
+      generateOnly: true,
+      name,
+    });
+
+    const snakeCaseName = decamelize(name);
+
+    const files = await recursiveListFiles(workDir);
+
+    // Check that `*stack.ts` and `*.test.ts` got created in the current directory is based on the name
+    expect(files).toContainEqual(expect.stringMatching(new RegExp(`${snakeCaseName}-stack.ts`)));
+    expect(files).toContainEqual(expect.stringMatching(new RegExp(`${snakeCaseName}.test.ts`)));
+
+    // Check that got created in the `bin` directory is based on the name
+    expect(files).toContainEqual(expect.stringMatching(new RegExp(`bin/${snakeCaseName}.ts`)));
   });
 
   cliTest('--generate-only should skip git init', async (workDir) => {

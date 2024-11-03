@@ -303,6 +303,7 @@ async function parseCommandLineArguments(args: string[]) {
     )
     .command('init [TEMPLATE]', 'Create a new, empty CDK project from a template.', (yargs: Argv) => yargs
       .option('language', { type: 'string', alias: 'l', desc: 'The language to be used for the new project (default can be configured in ~/.cdk.json)', choices: initTemplateLanguages })
+      .option('name', { type: 'string', alias: 'n', desc: 'The name of new project' })
       .option('list', { type: 'boolean', desc: 'List the available templates' })
       .option('generate-only', { type: 'boolean', default: false, desc: 'If true, only generates project files, without executing additional operations such as setting up a git repo, installing dependencies or compiling the project' }),
     )
@@ -722,6 +723,7 @@ export async function exec(args: string[], synthesizer?: Synthesizer): Promise<n
 
       case 'init':
         const language = configuration.settings.get(['language']);
+        const name = configuration.settings.get(['name']);
         if (args.list) {
           return printAvailableTemplates(language);
         } else {
@@ -730,6 +732,7 @@ export async function exec(args: string[], synthesizer?: Synthesizer): Promise<n
             language,
             canUseNetwork: undefined,
             generateOnly: args.generateOnly,
+            name,
           });
         }
       case 'migrate':

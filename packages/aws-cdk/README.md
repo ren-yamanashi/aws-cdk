@@ -72,6 +72,9 @@ Available templates:
 
 $ # Create a new library application in typescript
 $ cdk init lib --language=typescript
+
+$ # Create by specifying the project name
+$ cdk init [app|lib|sample-app] --language=[csharp|fsharp|java|javascript|python|typescript] --name=my-project
 ```
 
 ### `cdk list`
